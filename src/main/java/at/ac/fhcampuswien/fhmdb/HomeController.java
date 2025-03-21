@@ -12,13 +12,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class HomeController implements Initializable {
     @FXML
@@ -34,10 +32,10 @@ public class HomeController implements Initializable {
     public JFXComboBox genreComboBox;
 
     @FXML
-    public JFXComboBox releaseYearComboBox;
+    public ComboBox<String> releaseYearComboBox;
 
     @FXML
-    public JFXComboBox ratingsComboBox;
+    public ComboBox<String> ratingsComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -58,11 +56,33 @@ public class HomeController implements Initializable {
     }
 
     public void initializeState() {
-     //   allMovies = Movie.initializeMovies();
+        allMovies = Movie.initializeMovies();
         observableMovies.clear();
         observableMovies.addAll(allMovies); // add all movies to the observable list
         sortedState = SortedState.NONE;
     }
+    public void populateReleaseYearComboBox() {
+        releaseYearComboBox.getItems().clear();
+        releaseYearComboBox.getItems().add("No filter");
+        for (int year = 2025; year >= 1950; year--) {
+            releaseYearComboBox.getItems().add(String.valueOf(year));
+        }
+        releaseYearComboBox.setPromptText("Filter by Release Year");
+    }
+    public void populateRatingComboBox() {
+        ratingsComboBox.getItems().clear();
+        ratingsComboBox.getItems().add("No filter");
+
+        for (double rating = 10.0; rating >= 5.0; rating -= 0.5) {
+            // WICHTIG: Locale.US sorgt für Punkt statt Komma!
+            ratingsComboBox.getItems().add(String.format(Locale.US, "%.1f", rating));
+        }
+
+        ratingsComboBox.setPromptText("Filter by Rating");
+    }
+
+
+
 
     public void initializeLayout() {
         movieListView.setItems(observableMovies);   // set the items of the listview to the observable list
@@ -70,8 +90,10 @@ public class HomeController implements Initializable {
 
         Object[] genres = Genre.values();   // get all genres
         genreComboBox.getItems().add("No filter");  // add "no filter" to the combobox
-        genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
+        genreComboBox.getItems().addAll(genres);// add all genres to the combobox
 
+        populateRatingComboBox();
+        populateReleaseYearComboBox();
 
     }
 
@@ -136,14 +158,14 @@ public class HomeController implements Initializable {
                 .toList();
     }
 
-    public List<Movie> filterByRating(List<Movie> movies, float ratingFrom) {
+    public List<Movie> filterByRating(List<Movie> movies, float ratings) {
         if (movies == null) {
             throw new IllegalArgumentException("movies must not be null");
         }
 
         return movies.stream()
                 .filter(Objects::nonNull)
-                .filter(movie -> movie.getRating() >= ratingFrom)
+                .filter(movie -> movie.getRating() >= ratings)
                 .toList();
     }
 
