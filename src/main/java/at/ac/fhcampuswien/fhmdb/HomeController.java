@@ -34,7 +34,16 @@ public class HomeController implements Initializable {
     public JFXComboBox genreComboBox;
 
     @FXML
+    public JFXComboBox releaseYearComboBox;
+
+    @FXML
+    public JFXComboBox ratingsComboBox;
+
+    @FXML
     public JFXButton sortBtn;
+
+    @FXML
+    public JFXButton resetBtn;
 
     public List<Movie> allMovies;
 
@@ -62,7 +71,8 @@ public class HomeController implements Initializable {
         Object[] genres = Genre.values();   // get all genres
         genreComboBox.getItems().add("No filter");  // add "no filter" to the combobox
         genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
-        genreComboBox.setPromptText("Filter by Genre");
+
+
     }
 
     public void sortMovies(){
@@ -79,9 +89,11 @@ public class HomeController implements Initializable {
         if (sortDirection == SortedState.ASCENDING) {
             observableMovies.sort(Comparator.comparing(Movie::getTitle));
             sortedState = SortedState.ASCENDING;
+            sortBtn.setText("Sort (Asc)");
         } else {
             observableMovies.sort(Comparator.comparing(Movie::getTitle).reversed());
             sortedState = SortedState.DESCENDING;
+            sortBtn.setText("Sort (Desc)");
         }
     }
 
@@ -113,8 +125,30 @@ public class HomeController implements Initializable {
                 .filter(movie -> movie.getGenres().contains(genre))
                 .toList();
     }
+    public List<Movie> filterByReleaseYear(List<Movie> movies, int releaseYear) {
+        if (movies == null) {
+            throw new IllegalArgumentException("movies must not be null");
+        }
 
-    public void applyAllFilters(String searchQuery, Object genre) {
+        return movies.stream()
+                .filter(Objects::nonNull)
+                .filter(movie -> movie.getReleaseYear() == releaseYear)
+                .toList();
+    }
+
+    public List<Movie> filterByRating(List<Movie> movies, float ratingFrom) {
+        if (movies == null) {
+            throw new IllegalArgumentException("movies must not be null");
+        }
+
+        return movies.stream()
+                .filter(Objects::nonNull)
+                .filter(movie -> movie.getRating() >= ratingFrom)
+                .toList();
+    }
+
+
+    public void applyAllFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
         List<Movie> filteredMovies = allMovies;
 
         if (!searchQuery.isEmpty()) {
@@ -123,6 +157,24 @@ public class HomeController implements Initializable {
 
         if (genre != null && !genre.toString().equals("No filter")) {
             filteredMovies = filterByGenre(filteredMovies, Genre.valueOf(genre.toString()));
+        }
+
+        if (releaseYear != null && !releaseYear.toString().equals("No filter")) {
+            try {
+                int year = Integer.parseInt(releaseYear.toString());
+                filteredMovies = filterByReleaseYear(filteredMovies, year);
+            } catch (NumberFormatException e) {
+                System.err.println("Ungültiges Release Year: " + releaseYear);
+            }
+        }
+
+        if (ratings != null && !ratings.toString().equals("No filter")) {
+            try {
+                float rating = Float.parseFloat(ratings.toString());
+                filteredMovies = filterByRating(filteredMovies, rating);
+            } catch (NumberFormatException e) {
+                System.err.println("Ungültiges Rating: " + ratings);
+            }
         }
 
         observableMovies.clear();
@@ -140,4 +192,25 @@ public class HomeController implements Initializable {
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
     }
+
+    /***
+     * reset Button implementiert
+     * cleared die Suchfelder und Combobxen
+     * sortedState auf default Wert(NONE)
+     * @param actionEvent
+     */
+    public void resetBtnClicked(ActionEvent actionEvent) {
+
+    searchField.clear();
+
+    genreComboBox.getSelectionModel().clearSelection();
+    releaseYearComboBox.getSelectionModel().clearSelection();
+    ratingsComboBox.getSelectionModel().clearSelection();
+
+    observableMovies.clear();
+    observableMovies.addAll(allMovies);
+    sortedState= sortedState.NONE;
+    sortBtn.setText("Sort (unsorted)");
+    }
+
 }
