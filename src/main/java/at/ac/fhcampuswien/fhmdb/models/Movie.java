@@ -61,5 +61,7 @@ public class Movie {
     public String getWriters() { return writers; }
     public int getLengthInMinutes() { return lengthInMinutes; }
     public String getImgUrl() { return imgUrl; }
+
+
 }
 

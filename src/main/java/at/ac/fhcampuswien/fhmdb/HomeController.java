@@ -58,7 +58,7 @@ public class HomeController implements Initializable {
     }
 
     public void initializeState() {
-        allMovies = Movie.initializeMovies();
+     //   allMovies = Movie.initializeMovies();
         observableMovies.clear();
         observableMovies.addAll(allMovies); // add all movies to the observable list
         sortedState = SortedState.NONE;
@@ -184,8 +184,9 @@ public class HomeController implements Initializable {
     public void searchBtnClicked(ActionEvent actionEvent) {
         String searchQuery = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
-
-        applyAllFilters(searchQuery, genre);
+        Object  releaseYear = releaseYearComboBox.getSelectionModel().getSelectedItem();
+        Object ratings = ratingsComboBox.getSelectionModel().getSelectedItem();
+        applyAllFilters(searchQuery, genre, releaseYear, ratings);
         sortMovies(sortedState);
     }
 
