@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.services;
 
+import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MovieAPITest {
 
@@ -25,8 +27,9 @@ public class MovieAPITest {
     }
 
     @Test
-    void get_movie_from_query() throws IOException {
-        String result = movieAPI.GetMoviesFromQuery("The Godfather");
+    void get_movie_from_criteria() throws IOException {
+        String result = movieAPI.GetFilteredMovies("The Godfather", null, 0, 0);
+
         Object json = mapper.readValue("[\n" +
                 "  {\n" +
                 "    \"id\": \"81d317b0-29e5-4846-97a6-43c07f3edf4a\",\n" +
@@ -57,5 +60,11 @@ public class MovieAPITest {
         assertEquals(compactJson, result);
     }
 
+    @Test
+    void get_movie_with_id() throws IOException {
+        String id = "81d317b0-29e5-4846-97a6-43c07f3edf4a";
+        Movie movie = movieAPI.GetMovie(id);
 
+        //assertTrue(movie.getId().Equals(id));
+    }
 }
