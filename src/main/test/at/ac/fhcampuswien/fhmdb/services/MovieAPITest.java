@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.services;
 
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,5 +43,34 @@ public class MovieAPITest {
         assertEquals(query, movies.get(0).getTitle());
     }
 
+    @Test
+    void get_movies_from_genre() throws IOException {
+        List<Movie> movies = movieAPI.GetFilteredMovies(null, Genre.DRAMA, 0, 0);
 
+        boolean isDrama = true;
+
+        for(Movie movie : movies) {
+            if(!movie.getGenres().contains(Genre.DRAMA)) {
+                isDrama = false;
+                break;
+            }
+        }
+        assertTrue(isDrama);
+    }
+
+    @Test
+    void get_movies_from_ratingForm() throws IOException {
+        double rating = 8;
+        List<Movie> movies = movieAPI.GetFilteredMovies(null, null, 0, rating);
+
+        boolean isAboveRating = true;
+
+        for(Movie movie : movies) {
+            if(movie.getRating() < rating) {
+                isAboveRating = false;
+                break;
+            }
+        }
+        assertTrue(isAboveRating);
+    }
 }
