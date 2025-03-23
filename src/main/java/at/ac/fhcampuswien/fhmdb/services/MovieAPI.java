@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 public class MovieAPI {
@@ -19,14 +20,16 @@ public class MovieAPI {
     }
 
     //not tested yet
-    public String GetAllMovies() throws IOException {
+    public List<Movie> GetAllMovies() throws IOException {
         Request request = new Request.Builder()
                 .url(BASE_URL + "/movies")
                 .header("User-Agent", "UserAgentGroup/1.3")
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
+            String body = response.body().string();
+            return mapper.readValue(body, List.class);
+
         } catch (IOException e) {
             System.out.println("Fetching movies failed");
             System.out.println("GetMovies()-Error: " + e.getMessage());
