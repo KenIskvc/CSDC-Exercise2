@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.services;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
@@ -28,16 +29,16 @@ public class MovieAPI {
 
         try (Response response = client.newCall(request).execute()) {
             String body = response.body().string();
-            return mapper.readValue(body, List.class);
-
+            List<Movie> movies = mapper.readValue(body,  new TypeReference<List<Movie>>(){});
+            return movies;
         } catch (IOException e) {
             System.out.println("Fetching movies failed");
-            System.out.println("GetMovies()-Error: " + e.getMessage());
+            System.out.println("GetAllMovies()-Error: " + e.getMessage());
             return null;
         }
     }
 
-    public String GetFilteredMovies(String query, String genre, int releaseYear, double ratingForm) throws IOException {
+    public List<Movie> GetFilteredMovies(String query, String genre, int releaseYear, double ratingForm) throws IOException {
         HttpUrl.Builder urlBuilder
                 = Objects.requireNonNull(HttpUrl.parse(BASE_URL + "/movies")).newBuilder();
 
@@ -54,10 +55,12 @@ public class MovieAPI {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            return response.body().string();
+            String body = response.body().string();
+            List<Movie> filteredMovies = mapper.readValue(body,  new TypeReference<List<Movie>>(){});
+            return filteredMovies;
         } catch (IOException e) {
             System.out.println("Fetching movies failed");
-            System.out.println("GetMovies()-Error: " + e.getMessage());
+            System.out.println("GetFilteredMovies()-Error: " + e.getMessage());
             return null;
         }
     }
@@ -77,10 +80,11 @@ public class MovieAPI {
 
         try (Response response = client.newCall(request).execute()) {
             String json = response.body().string();
-            return mapper.readValue(json, Movie.class);
+            Movie movie = mapper.readValue(json, Movie.class);
+            return movie;
         } catch (IOException e) {
             System.out.println("Fetching movies failed");
-            System.out.println("GetMovies()-Error: " + e.getMessage());
+            System.out.println("GetMovie()-Error: " + e.getMessage());
             return null;
         }
     }

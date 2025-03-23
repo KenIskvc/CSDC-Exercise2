@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
@@ -52,10 +53,14 @@ public class HomeController implements Initializable {
     }
 
     public void initializeState() {
-        allMovies = movieAPI.GetAllMovies();
-        observableMovies.clear();
-        observableMovies.addAll(allMovies); // add all movies to the observable list
-        sortedState = SortedState.NONE;
+        try {
+            allMovies = movieAPI.GetAllMovies();
+            observableMovies.clear();
+            observableMovies.addAll(allMovies); // add all movies to the observable list
+            sortedState = SortedState.NONE;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void initializeLayout() {
