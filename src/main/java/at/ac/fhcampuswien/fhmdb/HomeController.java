@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -57,6 +58,7 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeState();
         initializeLayout();
+        MovieAPI movieAPI = new MovieAPI();
     }
 
     public void initializeState() {
@@ -69,14 +71,43 @@ public class HomeController implements Initializable {
             throw new RuntimeException(e);
         }
     }
+
+    /***
+     * holt alle Filme mit der API und filter nach distinct releaseYears
+     * zuvor hat man oft keine Filme gefunden, weil es nicht zu jedem Jahr auch einen Film gab
+     * nicht optimal aber funktioniert
+     */
     public void populateReleaseYearComboBox() {
         releaseYearComboBox.getItems().clear();
         releaseYearComboBox.getItems().add("No filter");
-        for (int year = 2025; year >= 1950; year--) {
-            releaseYearComboBox.getItems().add(String.valueOf(year));
+
+        try {
+            // Hol dir ALLE Filme (ohne Filter)
+            List<Movie> allMovies = movieAPI.GetFilteredMovies(null, null, -1, -1);
+
+            // Hole alle releaseYears und entferne Duplicates
+            Set<Integer> years = allMovies.stream()
+                    .map(Movie::getReleaseYear)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            // Sortieren (optional)
+            List<Integer> sortedYears = years.stream()
+                    .sorted(Comparator.reverseOrder())
+                    .collect(Collectors.toList());
+
+            // Items hinzufügen
+            for (Integer year : sortedYears) {
+                releaseYearComboBox.getItems().add(String.valueOf(year));
+            }
+
+            releaseYearComboBox.setPromptText("Filter by Release Year");
+
+        } catch (IOException e) {
+            System.err.println("Fehler beim Laden der Filme: " + e.getMessage());
         }
-        releaseYearComboBox.setPromptText("Filter by Release Year");
     }
+
     public void populateRatingComboBox() {
         ratingsComboBox.getItems().clear();
         ratingsComboBox.getItems().add("No filter");
@@ -127,89 +158,60 @@ public class HomeController implements Initializable {
         }
     }
 
-    public List<Movie> filterByQuery(List<Movie> movies, String query){
-        if(query == null || query.isEmpty()) return movies;
 
-        if(movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
+
+    public List<Movie> filterMovies(String searchQuery, Object genre, Object releaseYear, Object ratings) {
+        try {
+            // Genre: prüfe, ob ein Filter gesetzt ist
+            Genre genreFilter = null;
+            if (genre != null && !genre.toString().equals("No filter")) {
+                genreFilter = Genre.valueOf(genre.toString());
+            }
+
+            // Release Year: wenn gesetzt, konvertieren
+            int releaseYearFilter = -1;  // -1 = kein Filter
+            if (releaseYear != null && !releaseYear.toString().equals("No filter")) {
+                try {
+                    releaseYearFilter = Integer.parseInt(releaseYear.toString());
+                } catch (NumberFormatException e) {
+                    System.err.println("Ungültiges Release Year: " + releaseYear);
+                }
+            }
+
+            // Rating: wenn gesetzt, konvertieren
+            double ratingFilter = -1;
+            if (ratings != null && !ratings.toString().equals("No filter")) {
+                try {
+                    ratingFilter = Double.parseDouble(ratings.toString());
+                } catch (NumberFormatException e) {
+                    System.err.println("Ungültiges Rating: " + ratings);
+                }
+            }
+
+            // Rufe die API-Methode auf und hole die gefilterte Liste
+            List<Movie> filteredMovies = movieAPI.GetFilteredMovies(searchQuery, genreFilter, releaseYearFilter, ratingFilter);
+
+            // Wenn nichts zurückkommt, gib eine leere Liste zurück
+            return Objects.requireNonNullElse(filteredMovies, Collections.emptyList());
+
+        } catch (IOException e) {
+            System.err.println("Fehler beim Filtern der Filme über die API: " + e.getMessage());
+            return Collections.emptyList();
         }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie ->
-                    movie.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                    movie.getDescription().toLowerCase().contains(query.toLowerCase())
-                )
-                .toList();
     }
 
-    public List<Movie> filterByGenre(List<Movie> movies, Genre genre){
-        if(genre == null) return movies;
-
-        if(movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie -> movie.getGenres().contains(genre))
-                .toList();
-    }
-    public List<Movie> filterByReleaseYear(List<Movie> movies, int releaseYear) {
-        if (movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie -> movie.getReleaseYear() == releaseYear)
-                .toList();
-    }
-
-    public List<Movie> filterByRating(List<Movie> movies, float ratings) {
-        if (movies == null) {
-            throw new IllegalArgumentException("movies must not be null");
-        }
-
-        return movies.stream()
-                .filter(Objects::nonNull)
-                .filter(movie -> movie.getRating() >= ratings)
-                .toList();
-    }
 
 
     public void applyAllFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
-        List<Movie> filteredMovies = allMovies;
-
-        if (!searchQuery.isEmpty()) {
-            filteredMovies = filterByQuery(filteredMovies, searchQuery);
-        }
-
-        if (genre != null && !genre.toString().equals("No filter")) {
-            filteredMovies = filterByGenre(filteredMovies, Genre.valueOf(genre.toString()));
-        }
-
-        if (releaseYear != null && !releaseYear.toString().equals("No filter")) {
-            try {
-                int year = Integer.parseInt(releaseYear.toString());
-                filteredMovies = filterByReleaseYear(filteredMovies, year);
-            } catch (NumberFormatException e) {
-                System.err.println("Ungültiges Release Year: " + releaseYear);
-            }
-        }
-
-        if (ratings != null && !ratings.toString().equals("No filter")) {
-            try {
-                float rating = Float.parseFloat(ratings.toString());
-                filteredMovies = filterByRating(filteredMovies, rating);
-            } catch (NumberFormatException e) {
-                System.err.println("Ungültiges Rating: " + ratings);
-            }
-        }
+        System.out.println("Applying filters...");  // optional debug
+        List<Movie> filteredMovies = filterMovies(searchQuery, genre, releaseYear, ratings);
 
         observableMovies.clear();
         observableMovies.addAll(filteredMovies);
+
+        System.out.println("Filters applied. Movies found: " + filteredMovies.size());  // optional debug
     }
+
 
     public void searchBtnClicked(ActionEvent actionEvent) {
         String searchQuery = searchField.getText().trim().toLowerCase();
