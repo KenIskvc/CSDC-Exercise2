@@ -3,10 +3,7 @@ package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.control.ComboBox;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,132 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class HomeControllerTest {
 
     private HomeController homeController;
-    private ComboBox<String> releaseYearComboBox;
-    private ComboBox<String> ratingsComboBox;
 
-    @BeforeEach
-    void setUp() {
-        new JFXPanel(); // Für JavaFX-Komponenten
-        homeController = new HomeController();
 
-        releaseYearComboBox = new ComboBox<>();
-        ratingsComboBox = new ComboBox<>();
 
-        homeController.releaseYearComboBox = releaseYearComboBox;
-        homeController.ratingsComboBox = ratingsComboBox;
-    }
 
-    // ------------------------------------------------------------------------
-    // Tests für populateReleaseYearComboBox
-    // ------------------------------------------------------------------------
 
-    @Test
-    void shouldPopulateReleaseYearComboBoxWithCorrectItems() {
-        homeController.populateReleaseYearComboBox();
-
-        assertFalse(releaseYearComboBox.getItems().isEmpty());
-        assertEquals("No filter", releaseYearComboBox.getItems().get(0));
-        assertEquals("2025", releaseYearComboBox.getItems().get(1));
-        assertEquals("1950", releaseYearComboBox.getItems().get(releaseYearComboBox.getItems().size() - 1));
-    }
-
-    @Test
-    void shouldSetPromptTextInReleaseYearComboBox() {
-        homeController.populateReleaseYearComboBox();
-
-        assertEquals("Filter by Release Year", releaseYearComboBox.getPromptText());
-    }
-
-    // ------------------------------------------------------------------------
-    // Tests für populateRatingComboBox
-    // ------------------------------------------------------------------------
-
-    @Test
-    void shouldPopulateRatingComboBoxWithCorrectItems() {
-        homeController.populateRatingComboBox();
-
-        assertFalse(ratingsComboBox.getItems().isEmpty());
-        assertEquals("No filter", ratingsComboBox.getItems().get(0));
-        assertEquals("10.0", ratingsComboBox.getItems().get(1));
-        assertEquals("5.0", ratingsComboBox.getItems().get(ratingsComboBox.getItems().size() - 1));
-    }
-
-    @Test
-    void shouldSetPromptTextInRatingComboBox() {
-        homeController.populateRatingComboBox();
-
-        assertEquals("Filter by Rating", ratingsComboBox.getPromptText());
-    }
-
-    // ------------------------------------------------------------------------
-    // Tests für filterByReleaseYear
-    // ------------------------------------------------------------------------
-
-    @Test
-    void shouldFilterMoviesByExactReleaseYear() {
-        List<Movie> movies = createDummyMovies();
-
-        List<Movie> result = homeController.filterByReleaseYear(movies, 2020);
-
-        assertEquals(1, result.size());
-        assertEquals("Movie A", result.get(0).getTitle());
-    }
-
-    @Test
-    void shouldReturnEmptyListWhenNoMoviesMatchReleaseYear() {
-        List<Movie> movies = createDummyMovies();
-
-        List<Movie> result = homeController.filterByReleaseYear(movies, 1999);
-
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenMoviesListIsNullForReleaseYear() {
-        assertThrows(IllegalArgumentException.class, () -> homeController.filterByReleaseYear(null, 2020));
-    }
-
-    // ------------------------------------------------------------------------
-    // Tests für filterByRating
-    // ------------------------------------------------------------------------
-
-    @Test
-    void shouldFilterMoviesByMinimumRating() {
-        List<Movie> movies = createDummyMovies();
-
-        List<Movie> result = homeController.filterByRating(movies, 7.0f);
-
-        assertEquals(1, result.size());
-        assertEquals("Movie A", result.get(0).getTitle());
-    }
-
-    @Test
-    void shouldReturnEmptyListWhenNoMoviesMatchMinimumRating() {
-        List<Movie> movies = createDummyMovies();
-
-        List<Movie> result = homeController.filterByRating(movies, 10.0f);
-
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenMoviesListIsNullForRating() {
-        assertThrows(IllegalArgumentException.class, () -> homeController.filterByRating(null, 7.0f));
-    }
-
-    // ------------------------------------------------------------------------
-    // Helper-Methoden für Dummy-Daten
-    // ------------------------------------------------------------------------
-
-    private List<Movie> createDummyMovies() {
-        return List.of(
-                new Movie( "Movie A", "Desc A", List.of(Genre.ACTION), 8.0, 2020),
-                new Movie( "Movie B", "Desc B", List.of(Genre.COMEDY), 6.0, 2018)
-        );
-    }
-}
-
-/*
     @BeforeAll
     static void init() {
         homeController = new HomeController();
@@ -351,5 +227,5 @@ class HomeControllerTest {
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
- */
+
 
