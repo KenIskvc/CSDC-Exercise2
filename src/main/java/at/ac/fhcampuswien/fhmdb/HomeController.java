@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
+import at.ac.fhcampuswien.fhmdb.services.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -15,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -49,6 +51,8 @@ public class HomeController implements Initializable {
 
     protected SortedState sortedState;
 
+    private final MovieAPI movieAPI = new MovieAPI();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeState();
@@ -56,10 +60,14 @@ public class HomeController implements Initializable {
     }
 
     public void initializeState() {
-        allMovies = Movie.initializeMovies();
-        observableMovies.clear();
-        observableMovies.addAll(allMovies); // add all movies to the observable list
-        sortedState = SortedState.NONE;
+        try {
+            allMovies = movieAPI.GetAllMovies();
+            observableMovies.clear();
+            observableMovies.addAll(allMovies); // add all movies to the observable list
+            sortedState = SortedState.NONE;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void populateReleaseYearComboBox() {
         releaseYearComboBox.getItems().clear();
