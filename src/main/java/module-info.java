@@ -6,6 +6,7 @@ module at.ac.fhcampuswien.fhmdb {
     requires okhttp3;
     requires com.fasterxml.jackson.databind;
 
+
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml;
     opens at.ac.fhcampuswien.fhmdb.models to com.fasterxml.jackson.databind;
     exports at.ac.fhcampuswien.fhmdb.models;
