@@ -38,7 +38,7 @@ public class MovieAPITest {
     @Test
     void get_movie_from_query() throws IOException {
         String query = "The Godfather";
-        List<Movie> movies = movieAPI.GetFilteredMovies(query, null, 0, 0);
+        List<Movie> movies = movieAPI.GetFilteredMovies(query, null, -1, -1);
 
         assertEquals(query, movies.get(0).getTitle());
     }
