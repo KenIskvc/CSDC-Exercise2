@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 import at.ac.fhcampuswien.fhmdb.services.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.services.MovieUtils;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -68,6 +69,18 @@ public class HomeController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        String popularActor = MovieUtils.getMostPopularActor(observableMovies);
+        System.out.println("Beliebtester Schauspieler: " + popularActor);
+
+        int longestTitle = MovieUtils.getLongestMovieTitle(observableMovies);
+        System.out.println("Längster Titel: " + longestTitle + " Zeichen");
+
+        long nolanCount = MovieUtils.countMoviesFrom(observableMovies, "Christopher Nolan");
+        System.out.println("Filme von Christopher Nolan: " + nolanCount);
+
+        List<Movie> betweenYears = MovieUtils.getMoviesBetweenYears(observableMovies, 2000, 2010);
+        System.out.println("Filme zwischen 2000 und 2010: " + betweenYears.size());
+
     }
     public void populateReleaseYearComboBox() {
         releaseYearComboBox.getItems().clear();

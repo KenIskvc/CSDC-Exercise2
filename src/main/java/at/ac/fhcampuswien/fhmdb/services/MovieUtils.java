@@ -27,7 +27,8 @@ public class MovieUtils {
 
     public static long countMoviesFrom(List<Movie> movies, String director) {
         return movies.stream()
-                .filter(movie -> movie.getDirector().equalsIgnoreCase(director))
+                .filter(movie -> movie.getDirectors().stream()
+                        .anyMatch(d -> d.equalsIgnoreCase(director)))
                 .count();
     }
 
