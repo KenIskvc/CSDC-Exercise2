@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +46,7 @@ public class MovieAPI {
 
         if (query != null && !query.isEmpty()) urlBuilder.addQueryParameter("query", query);
         if(genre != null) urlBuilder.addQueryParameter("genre", String.valueOf(genre));
-        //if(releaseYear != -1) urlBuilder.addQueryParameter("releaseYear", String.valueOf(releaseYear));
+        if(releaseYear != -1) urlBuilder.addQueryParameter("releaseYear", String.valueOf(releaseYear));
         if(ratingFrom != -1) urlBuilder.addQueryParameter("ratingFrom", String.valueOf(ratingFrom));
 
         String url = urlBuilder.build().toString();
@@ -93,4 +94,8 @@ public class MovieAPI {
             return null;
         }
     }
+
+
+
+
 }
