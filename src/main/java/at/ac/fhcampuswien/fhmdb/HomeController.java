@@ -173,7 +173,7 @@ public class HomeController implements Initializable {
 
 
 
-    public List<Movie> prepareFilterParamsAndFetch(String searchQuery, Object genre, Object releaseYear, Object ratings) {
+    public List<Movie> applyFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
         try {
             // Genre: prüfe, ob ein Filter gesetzt ist
             Genre genreFilter = null;
@@ -217,7 +217,7 @@ public class HomeController implements Initializable {
 
     public void applyAllFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
         System.out.println("Applying filters...");  // optional debug
-        List<Movie> filteredMovies = prepareFilterParamsAndFetch(searchQuery, genre, releaseYear, ratings);
+        List<Movie> filteredMovies = applyFilters(searchQuery, genre, releaseYear, ratings);
 
         observableMovies.clear();
         observableMovies.addAll(filteredMovies);
