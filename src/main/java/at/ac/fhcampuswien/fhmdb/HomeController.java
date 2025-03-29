@@ -256,7 +256,7 @@ public class HomeController implements Initializable {
     observableMovies.clear();
     observableMovies.addAll(allMovies);
     sortedState= sortedState.NONE;
-    sortBtn.setText("Sort (unsorted)");
+    sortBtn.setText("Sort");
     }
 
 }
