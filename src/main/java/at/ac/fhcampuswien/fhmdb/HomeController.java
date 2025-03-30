@@ -55,6 +55,9 @@ public class HomeController implements Initializable {
 
     private final MovieAPI movieAPI = new MovieAPI();
 
+    public HomeController(MovieAPI dummyAPI) {
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeState();
@@ -215,7 +218,7 @@ public class HomeController implements Initializable {
 
 
 
-    public void applyAllFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
+    public void callApplyFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
         System.out.println("Applying filters...");  // optional debug
         List<Movie> filteredMovies = applyFilters(searchQuery, genre, releaseYear, ratings);
 
@@ -231,7 +234,7 @@ public class HomeController implements Initializable {
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
         Object  releaseYear = releaseYearComboBox.getSelectionModel().getSelectedItem();
         Object ratings = ratingsComboBox.getSelectionModel().getSelectedItem();
-        applyAllFilters(searchQuery, genre, releaseYear, ratings);
+        callApplyFilters(searchQuery, genre, releaseYear, ratings);
         sortMovies(sortedState);
     }
 
