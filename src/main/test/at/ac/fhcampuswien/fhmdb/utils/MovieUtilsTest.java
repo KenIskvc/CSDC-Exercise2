@@ -39,7 +39,7 @@ public class MovieUtilsTest {
     @Test
     void testGetLongestMovieTitle() {
         String result = MovieUtils.getLongestMovieTitle(testMovies);
-        assertEquals("The Dark Knight".length(), result);
+        assertEquals("The Dark Knight (15 Zeichen)", result);
     }
 
     @Test
