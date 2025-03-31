@@ -2,7 +2,6 @@ package at.ac.fhcampuswien.fhmdb.services;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -14,12 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MovieAPITest {
 
     private static MovieAPI movieAPI;
-    private static ObjectMapper mapper;
 
     @BeforeAll
     public static void init() {
         movieAPI = new MovieAPI();
-        mapper = new ObjectMapper();
     }
     @Test
     void get_all_movies_without_params_test() throws IOException {
@@ -72,5 +69,22 @@ public class MovieAPITest {
             }
         }
         assertTrue(isAboveRating);
+    }
+
+    @Test
+    void get_movies_from_releaseYear() throws IOException {
+        int year = 1972;
+        List<Movie> movies = movieAPI.GetFilteredMovies(null, null, year, 0);
+
+        boolean matchesReleasYear = true;
+
+        for(Movie movie : movies) {
+            if(movie.getReleaseYear() != year) {
+                matchesReleasYear = false;
+                break;
+            }
+        }
+
+        assertTrue(matchesReleasYear);
     }
 }
