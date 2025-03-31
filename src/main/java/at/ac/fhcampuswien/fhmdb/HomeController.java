@@ -60,7 +60,6 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeState();
         initializeLayout();
-        MovieAPI movieAPI = new MovieAPI();
     }
 
     public void initializeState() {
