@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb.services;
+package at.ac.fhcampuswien.fhmdb.utils;
 
 import java.util.*;
 import java.util.function.Function;
