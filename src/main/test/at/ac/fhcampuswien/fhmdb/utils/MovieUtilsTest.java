@@ -38,7 +38,7 @@ public class MovieUtilsTest {
 
     @Test
     void testGetLongestMovieTitle() {
-        int result = MovieUtils.getLongestMovieTitle(testMovies);
+        String result = MovieUtils.getLongestMovieTitle(testMovies);
         assertEquals("The Dark Knight".length(), result);
     }
 

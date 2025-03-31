@@ -75,8 +75,8 @@ public class HomeController implements Initializable {
         String popularActor = MovieUtils.getMostPopularActor(observableMovies);
         System.out.println("Beliebtester Schauspieler: " + popularActor);
 
-        int longestTitle = MovieUtils.getLongestMovieTitle(observableMovies);
-        System.out.println("Längster Titel: " + longestTitle + " Zeichen");
+        String longestTitle = MovieUtils.getLongestMovieTitle(observableMovies);
+        System.out.println("Längster Titel: " + longestTitle);
 
         long nolanCount = MovieUtils.countMoviesFrom(observableMovies, "Christopher Nolan");
         System.out.println("Filme von Christopher Nolan: " + nolanCount);

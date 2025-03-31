@@ -17,13 +17,14 @@ public class MovieUtils {
                 .orElse("Unknown");
     }
 
-    public static int getLongestMovieTitle(List<Movie> movies) {
+    public static String getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .map(Movie::getTitle)
-                .mapToInt(String::length)
-                .max()
-                .orElse(0);
+                .max(Comparator.comparingInt(String::length))
+                .map(title -> title + " (" + title.length() + " Zeichen)")
+                .orElse("Kein Titel gefunden");
     }
+
 
     public static long countMoviesFrom(List<Movie> movies, String director) {
         return movies.stream()
