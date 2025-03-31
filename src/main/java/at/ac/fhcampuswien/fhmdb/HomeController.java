@@ -55,8 +55,6 @@ public class HomeController implements Initializable {
 
     private final MovieAPI movieAPI = new MovieAPI();
 
-    public HomeController(MovieAPI dummyAPI) {
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -136,9 +134,6 @@ public class HomeController implements Initializable {
         ratingsComboBox.setPromptText("Filter by Rating");
     }
 
-
-
-
     public void initializeLayout() {
         movieListView.setItems(observableMovies);   // set the items of the listview to the observable list
         movieListView.setCellFactory(movieListView -> new MovieCell()); // apply custom cells to the listview
@@ -174,7 +169,45 @@ public class HomeController implements Initializable {
         }
     }
 
+    //Not used, just for testing
+    public Map<String, String> GetFilterValues(String searchQuery, Object genre, Object releaseYear, Object ratings) {
+        Map<String, String> filterValues = new HashMap<>();
+        try {
+            // Genre: prüfe, ob ein Filter gesetzt ist
+            Genre genreFilter = null;
+            if (genre != null && !genre.toString().equals("No filter")) {
+                genreFilter = Genre.valueOf(genre.toString());
+                filterValues.put("genre", genreFilter.toString());
+            }
 
+            // Release Year: wenn gesetzt, konvertieren
+            int releaseYearFilter = -1;  // -1 = kein Filter
+            if (releaseYear != null && !releaseYear.toString().equals("No filter")) {
+                try {
+                    releaseYearFilter = Integer.parseInt(releaseYear.toString());
+                    filterValues.put("releaseYear", String.valueOf(releaseYearFilter));
+                } catch (NumberFormatException e) {
+                    System.err.println("Ungültiges Release Year: " + releaseYear);
+                }
+            }
+
+            // Rating: wenn gesetzt, konvertieren
+            double ratingFilter = -1;
+            if (ratings != null && !ratings.toString().equals("No filter")) {
+                try {
+                    ratingFilter = Double.parseDouble(ratings.toString());
+                    filterValues.put("rating", String.valueOf(ratingFilter));
+                } catch (NumberFormatException e) {
+                    System.err.println("Ungültiges Rating: " + ratings);
+                }
+            }
+
+            return filterValues;
+        } catch (Exception e) {
+            System.err.println("Fehler beim Filtern der Filme über die API: " + e.getMessage());
+            return null;
+        }
+    }
 
     public List<Movie> applyFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
         try {
@@ -216,8 +249,6 @@ public class HomeController implements Initializable {
         }
     }
 
-
-
     public void callApplyFilters(String searchQuery, Object genre, Object releaseYear, Object ratings) {
         System.out.println("Applying filters...");  // optional debug
         List<Movie> filteredMovies = applyFilters(searchQuery, genre, releaseYear, ratings);
@@ -227,7 +258,6 @@ public class HomeController implements Initializable {
 
         System.out.println("Filters applied. Movies found: " + filteredMovies.size());  // optional debug
     }
-
 
     public void searchBtnClicked(ActionEvent actionEvent) {
         String searchQuery = searchField.getText().trim().toLowerCase();
