@@ -73,4 +73,21 @@ public class MovieAPITest {
         }
         assertTrue(isAboveRating);
     }
+
+    @Test
+    void get_movies_from_releaseYear() throws IOException {
+        int year = 1972;
+        List<Movie> movies = movieAPI.GetFilteredMovies(null, null, year, 0);
+
+        boolean matchesReleasYear = true;
+
+        for(Movie movie : movies) {
+            if(movie.getReleaseYear() != year) {
+                matchesReleasYear = false;
+                break;
+            }
+        }
+
+        assertTrue(matchesReleasYear);
+    }
 }
